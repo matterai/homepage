@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ethers } from 'ethers';
 import { queryFailedErrorPostgres } from 'src/utils';
 import { Repository } from 'typeorm';
-import { AddUserDto } from './dtos/add-user.dto';
+import { AddEvmUserDto } from './dtos/add-evm-user.dto';
 import { UserEntity } from './entities/user.entity';
 import { UserModel } from './models/user.model';
 import { UsersResponse } from './users.response';
@@ -15,7 +15,7 @@ export class UsersService {
     private readonly usersRepository: Repository<UserEntity>,
   ) {}
 
-  async create(addUser: AddUserDto): Promise<[UsersResponse, UserModel | null]> {
+  async create(addUser: AddEvmUserDto): Promise<[UsersResponse, UserModel | null]> {
     const address = this.getChecksum(addUser.address);
 
     if (!addUser || !address) {

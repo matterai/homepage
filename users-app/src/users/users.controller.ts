@@ -7,7 +7,7 @@ import {
   Logger,
   Post,
 } from '@nestjs/common';
-import { AddUserDto } from './dtos/add-user.dto';
+import { AddEvmUserDto } from './dtos/add-evm-user.dto';
 import { UserModel } from './models/user.model';
 import { UsersResponse } from './users.response';
 import { UsersService } from './users.service';
@@ -18,7 +18,7 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
-  async post(@Body() body: AddUserDto): Promise<UserModel> {
+  async post(@Body() body: AddEvmUserDto): Promise<UserModel> {
     const [code, user] = await this.usersService.create(body);
     switch (code) {
       case UsersResponse.Success:
