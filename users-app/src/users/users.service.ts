@@ -31,8 +31,8 @@ export class UsersService {
       return [UsersResponse.Success, this.toModel(result)];
     } catch (e) {
       if (queryFailedErrorPostgres(e)) {
-        switch (e.sqlState) {
-          case '23000':
+        switch (e.code) {
+          case '23505':
             return [UsersResponse.UserAlreadyExist, null];
           default:
             this.logger.error(`Unhandled Postgres Error`, JSON.stringify(e));

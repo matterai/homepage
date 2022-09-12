@@ -1,16 +1,18 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity({ name: 'user' })
 export class UserEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column('varchar', { nullable: true })
+  @Index({ unique: true })
+  @Column('varchar', { nullable: true, unique: true })
   evmAddress: string;
 
   @Column('varchar', { nullable: true })
   displayName: string;
 
+  @Index({ unique: true })
   @Column('varchar', { nullable: true, unique: true })
   email: string;
 

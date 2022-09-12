@@ -22,11 +22,11 @@ export class UsersController {
       case UsersResponse.Success:
         return user;
       case UsersResponse.BadRequest:
-        throw new BadRequestException(body, `Invalid request`);
+        throw new BadRequestException(`Invalid request`);
       case UsersResponse.UserAlreadyExist:
-        throw new ConflictException(body, `User already exist`);
+        throw new ConflictException(`User already exist`);
       default:
-        throw new InternalServerErrorException(body, `Internal error`);
+        throw new InternalServerErrorException(`Internal error`);
     }
   }
 }
