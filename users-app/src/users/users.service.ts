@@ -35,9 +35,11 @@ export class UsersService {
           case '23000':
             return [UsersResponse.UserAlreadyExist, null];
           default:
+            this.logger.error(`Unhandled Postgres Error`, JSON.stringify(e));
             return [UsersResponse.UnhandledError, null];
         }
       } else {
+        this.logger.error(`Unhandled Error`, JSON.stringify(e));
         return [UsersResponse.UnhandledError, null];
       }
     }

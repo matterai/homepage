@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity('user')
+@Entity({ name: 'user' })
 export class UserEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -14,9 +14,9 @@ export class UserEntity {
   @Column('varchar', { nullable: true, unique: true })
   email: string;
 
-  @Column('datetime2', { nullable: false, default: () => 'now()' })
+  @Column('timestamptz', { nullable: false, default: () => 'now()' })
   created: Date;
 
-  @Column('datetime2', { nullable: true })
+  @Column('timestamptz', { nullable: true })
   updated: Date;
 }

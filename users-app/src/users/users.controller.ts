@@ -4,7 +4,6 @@ import {
   ConflictException,
   Controller,
   InternalServerErrorException,
-  Logger,
   Post,
 } from '@nestjs/common';
 import { AddEvmUserDto } from './dtos/add-evm-user.dto';
@@ -14,7 +13,6 @@ import { UsersService } from './users.service';
 
 @Controller({ path: 'users', version: '1' })
 export class UsersController {
-  private readonly logger = new Logger(UsersController.name);
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
