@@ -1,6 +1,3 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { BaseEvmUser } from './base-evm-user.dto';
 
-export class GetEvmUser {
-  @ApiProperty()
-  address: string;
-}
+export class GetEvmUser extends BaseEvmUser {}
