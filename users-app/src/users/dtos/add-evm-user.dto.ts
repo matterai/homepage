@@ -1,3 +1,6 @@
-import { BaseEvmUser } from './base-evm-user.dto';
+import { ApiProperty } from '@nestjs/swagger';
 
-export class AddEvmUserDto extends BaseEvmUser {}
+export class AddEvmUserDto {
+  @ApiProperty({ description: 'EVM wallet address' })
+  address: string;
+}

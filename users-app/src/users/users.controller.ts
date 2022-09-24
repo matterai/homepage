@@ -19,7 +19,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { AddEvmUserDto } from './dtos/add-evm-user.dto';
-import { GetEvmUser } from './dtos/get-evm-user.dto';
+import { GetUserDto } from './dtos/get-user.dto';
 import { UserModel } from './models/user.model';
 import { UsersResponse } from './users.response';
 import { UsersService } from './users.service';
@@ -33,7 +33,7 @@ export class UsersController {
   @HttpCode(200)
   @ApiOkResponse({ type: UserModel, description: 'User found' })
   @ApiNotFoundResponse({ description: 'User was not found' })
-  async get(@Query() query: GetEvmUser): Promise<UserModel> {
+  async get(@Query() query: GetUserDto): Promise<UserModel> {
     const [code, user] = await this.usersService.get(query);
     switch (code) {
       case UsersResponse.Success:
