@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { getChecksum, queryFailedErrorPostgres } from 'src/utils';
 import { Repository } from 'typeorm';
 import { AddEvmUserDto } from './dtos/add-evm-user.dto';
+import { GetEvmUser } from './dtos/get-evm-user.dto';
 import { UserEntity } from './entities/user.entity';
 import { UserModel } from './models/user.model';
 import { UsersMap } from './users.map';
@@ -15,10 +16,27 @@ export class UsersService {
     private readonly usersRepository: Repository<UserEntity>,
   ) {}
 
+  async get(getUser: GetEvmUser): Promise<[UsersResponse, UserModel | null]> {
+    const address = getChecksum(getUser.address);
+
+    if (!address) {
+      this.logger.error(`Invalid request`, JSON.stringify(getUser));
+      return [UsersResponse.BadRequest, null];
+    }
+
+    try {
+      const result = await this.usersRepository.findOneBy({ evmAddress: address });
+      return result ? [UsersResponse.Success, UsersMap.toModel(result)] : [UsersResponse.UserNotFound, null];
+    } catch (e) {
+      this.logger.error(`Unhandled Error`, JSON.stringify(e));
+      return [UsersResponse.UnhandledError, null];
+    }
+  }
+
   async create(addUser: AddEvmUserDto): Promise<[UsersResponse, UserModel | null]> {
     const address = getChecksum(addUser.address);
 
-    if (!addUser || !address) {
+    if (!address) {
       this.logger.error(`Invalid request`, JSON.stringify(addUser));
       return [UsersResponse.BadRequest, null];
     }

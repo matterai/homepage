@@ -3,12 +3,23 @@ import {
   Body,
   ConflictException,
   Controller,
+  Get,
   HttpCode,
   InternalServerErrorException,
+  NotFoundException,
   Post,
+  Query,
 } from '@nestjs/common';
-import { ApiBadRequestResponse, ApiConflictResponse, ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiConflictResponse,
+  ApiCreatedResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { AddEvmUserDto } from './dtos/add-evm-user.dto';
+import { GetEvmUser } from './dtos/get-evm-user.dto';
 import { UserModel } from './models/user.model';
 import { UsersResponse } from './users.response';
 import { UsersService } from './users.service';
@@ -17,6 +28,22 @@ import { UsersService } from './users.service';
 @Controller({ path: 'users', version: '1' })
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
+
+  @Get()
+  @HttpCode(200)
+  @ApiOkResponse({ type: UserModel, description: 'User found' })
+  @ApiNotFoundResponse({ description: 'User was not found' })
+  async get(@Query() query: GetEvmUser): Promise<UserModel> {
+    const [code, user] = await this.usersService.get(query);
+    switch (code) {
+      case UsersResponse.Success:
+        return user;
+      case UsersResponse.UserNotFound:
+        throw new NotFoundException(`User does not exist`);
+      default:
+        throw new InternalServerErrorException(`Internal error`);
+    }
+  }
 
   @Post()
   @HttpCode(201)
