@@ -1,7 +1,6 @@
 import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ethers } from 'ethers';
-import { queryFailedErrorPostgres } from 'src/utils';
+import { getChecksum, queryFailedErrorPostgres } from 'src/utils';
 import { Repository } from 'typeorm';
 import { AddEvmUserDto } from './dtos/add-evm-user.dto';
 import { UserEntity } from './entities/user.entity';
@@ -16,7 +15,7 @@ export class UsersService {
   ) {}
 
   async create(addUser: AddEvmUserDto): Promise<[UsersResponse, UserModel | null]> {
-    const address = this.getChecksum(addUser.address);
+    const address = getChecksum(addUser.address);
 
     if (!addUser || !address) {
       this.logger.error(`Invalid request`, JSON.stringify(addUser));
@@ -42,14 +41,6 @@ export class UsersService {
         this.logger.error(`Unhandled Error`, JSON.stringify(e));
         return [UsersResponse.UnhandledError, null];
       }
-    }
-  }
-
-  private getChecksum(evmAddress: string): string | null {
-    try {
-      return ethers.utils.getAddress(evmAddress);
-    } catch (exception) {
-      return null;
     }
   }
 

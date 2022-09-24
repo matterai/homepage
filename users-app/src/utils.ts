@@ -1,3 +1,4 @@
+import { ethers } from 'ethers';
 import { QueryFailedError } from 'typeorm';
 
 export const queryFailedErrorPostgres = (
@@ -7,3 +8,11 @@ export const queryFailedErrorPostgres = (
   sqlMessage: string;
   code: string;
 } => error instanceof QueryFailedError;
+
+export const getChecksum = (evmAddress: string): string => {
+  try {
+    return ethers.utils.getAddress(evmAddress);
+  } catch (e) {
+    return null;
+  }
+};
