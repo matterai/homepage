@@ -32,6 +32,7 @@ export class UsersService {
       if (queryFailedErrorPostgres(e)) {
         switch (e.code) {
           case '23505':
+            this.logger.error(`Conflict while inserting`, JSON.stringify(e));
             return [UsersResponse.UserAlreadyExist, null];
           default:
             this.logger.error(`Unhandled Postgres Error`, JSON.stringify(e));
