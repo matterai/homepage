@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { AddEvmUserDto } from './dtos/add-evm-user.dto';
 import { UserEntity } from './entities/user.entity';
 import { UserModel } from './models/user.model';
+import { UsersMap } from './users.map';
 import { UsersResponse } from './users.response';
 
 export class UsersService {
@@ -27,7 +28,7 @@ export class UsersService {
 
     try {
       const result = await this.usersRepository.save(user);
-      return [UsersResponse.Success, this.toModel(result)];
+      return [UsersResponse.Success, UsersMap.toModel(result)];
     } catch (e) {
       if (queryFailedErrorPostgres(e)) {
         switch (e.code) {
@@ -43,15 +44,5 @@ export class UsersService {
         return [UsersResponse.UnhandledError, null];
       }
     }
-  }
-
-  private toModel(user: UserEntity): UserModel {
-    return {
-      id: user.id,
-      displayName: user.displayName,
-      email: user.email,
-      evmAddress: user.evmAddress,
-      created: user.created,
-    };
   }
 }
