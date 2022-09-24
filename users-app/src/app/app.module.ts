@@ -5,7 +5,6 @@ import { UsersModule } from 'src/users/users.module';
 import { DataSource } from 'typeorm';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { Constants } from './app.constants';
-import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
 @Module({
@@ -33,7 +32,7 @@ import { AppService } from './app.service';
     }),
     UsersModule,
   ],
-  controllers: [AppController],
+  controllers: [],
   providers: [AppService],
 })
 export class AppModule {
