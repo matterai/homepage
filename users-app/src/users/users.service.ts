@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { getChecksum, queryFailedErrorPostgres } from 'src/utils';
 import { Repository } from 'typeorm';
 import { AddEvmUserDto } from './dtos/add-evm-user.dto';
+import { EditUserDto } from './dtos/edit-user.dto';
 import { GetUserDto } from './dtos/get-user.dto';
 import { UserEntity } from './entities/user.entity';
 import { UserModel } from './models/user.model';
@@ -16,9 +17,9 @@ export class UsersService {
     private readonly usersRepository: Repository<UserEntity>,
   ) {}
 
-  async get(getUser: GetUserDto): Promise<[UsersResponse, UserModel | null]> {
+  async get(dto: GetUserDto): Promise<[UsersResponse, UserModel | null]> {
     try {
-      const { id } = getUser;
+      const { id } = dto;
       const result = await this.usersRepository.findOneBy({ id });
       return result ? [UsersResponse.Success, UsersMap.toModel(result)] : [UsersResponse.UserNotFound, null];
     } catch (e) {
@@ -27,11 +28,11 @@ export class UsersService {
     }
   }
 
-  async create(addUser: AddEvmUserDto): Promise<[UsersResponse, UserModel | null]> {
-    const address = getChecksum(addUser.address);
+  async create(dto: AddEvmUserDto): Promise<[UsersResponse, UserModel | null]> {
+    const address = getChecksum(dto.address);
 
     if (!address) {
-      this.logger.error(`Invalid request`, JSON.stringify(addUser));
+      this.logger.error(`Invalid request`, JSON.stringify(dto));
       return [UsersResponse.BadRequest, null];
     }
 
@@ -55,6 +56,29 @@ export class UsersService {
         this.logger.error(`Unhandled Error`, JSON.stringify(e));
         return [UsersResponse.UnhandledError, null];
       }
+    }
+  }
+
+  async update(dto: EditUserDto): Promise<[UsersResponse, UserModel | null]> {
+    try {
+      const { id, email, displayName } = dto;
+      const result = await this.usersRepository
+        .createQueryBuilder()
+        .update(UserEntity)
+        .set({ displayName: displayName, email: email, updated: 'now()' })
+        .where({ id })
+        .returning('*')
+        .execute();
+
+      if (result.affected === 0) {
+        return [UsersResponse.UserNotFound, null];
+      }
+
+      const model = UsersMap.toModel(result.raw[0]);
+      return [UsersResponse.Success, model];
+    } catch (e) {
+      this.logger.error(`Unhandled Error`, JSON.stringify(e));
+      return [UsersResponse.UnhandledError, null];
     }
   }
 }

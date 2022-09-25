@@ -8,6 +8,7 @@ import {
   InternalServerErrorException,
   NotFoundException,
   Post,
+  Put,
   Query,
 } from '@nestjs/common';
 import {
@@ -19,6 +20,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { AddEvmUserDto } from './dtos/add-evm-user.dto';
+import { EditUserDto } from './dtos/edit-user.dto';
 import { GetUserDto } from './dtos/get-user.dto';
 import { UserModel } from './models/user.model';
 import { UsersResponse } from './users.response';
@@ -61,6 +63,22 @@ export class UsersController {
         throw new ConflictException(`User already exist`);
       default:
         throw new InternalServerErrorException(`Internal error`);
+    }
+  }
+
+  @Put()
+  @HttpCode(200)
+  @ApiOkResponse({ type: UserModel, description: 'User was updated' })
+  @ApiNotFoundResponse({ description: `User was not found` })
+  async put(@Body() body: EditUserDto): Promise<UserModel> {
+    const [code, user] = await this.usersService.update(body);
+    switch (code) {
+      case UsersResponse.Success:
+        return user;
+      case UsersResponse.UserNotFound:
+        throw new NotFoundException(`User was not found`);
+      default:
+        throw new InternalServerErrorException(`Internal errror`);
     }
   }
 }
