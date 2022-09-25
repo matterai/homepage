@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { AddEvmUserDto } from './dtos/add-evm-user.dto';
 import { EditUserDto } from './dtos/edit-user.dto';
 import { GetUserDto } from './dtos/get-user.dto';
+import { DeleteUserDto } from './dtos/remove-user.dto';
 import { UserEntity } from './entities/user.entity';
 import { UserModel } from './models/user.model';
 import { UsersMap } from './users.map';
@@ -70,6 +71,30 @@ export class UsersService {
         .returning('*')
         .execute();
 
+      if (result.affected === 0) {
+        return [UsersResponse.UserNotFound, null];
+      }
+
+      const model = UsersMap.toModel(result.raw[0]);
+      return [UsersResponse.Success, model];
+    } catch (e) {
+      this.logger.error(`Unhandled Error`, JSON.stringify(e));
+      return [UsersResponse.UnhandledError, null];
+    }
+  }
+
+  async delete(dto: DeleteUserDto): Promise<[UsersResponse, UserModel | null]> {
+    try {
+      const { id } = dto;
+      const result = await this.usersRepository
+        .createQueryBuilder()
+        .delete()
+        .from(UserEntity)
+        .where({ id })
+        .returning('*')
+        .execute();
+
+      console.log(result);
       if (result.affected === 0) {
         return [UsersResponse.UserNotFound, null];
       }

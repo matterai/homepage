@@ -9,6 +9,7 @@ export class UsersMap {
       email: user.email,
       evmAddress: user.evmAddress,
       created: user.created,
+      updated: user.updated,
     };
   }
 }

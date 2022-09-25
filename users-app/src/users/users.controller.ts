@@ -3,6 +3,7 @@ import {
   Body,
   ConflictException,
   Controller,
+  Delete,
   Get,
   HttpCode,
   InternalServerErrorException,
@@ -22,6 +23,7 @@ import {
 import { AddEvmUserDto } from './dtos/add-evm-user.dto';
 import { EditUserDto } from './dtos/edit-user.dto';
 import { GetUserDto } from './dtos/get-user.dto';
+import { DeleteUserDto } from './dtos/remove-user.dto';
 import { UserModel } from './models/user.model';
 import { UsersResponse } from './users.response';
 import { UsersService } from './users.service';
@@ -72,6 +74,22 @@ export class UsersController {
   @ApiNotFoundResponse({ description: `User was not found` })
   async put(@Body() body: EditUserDto): Promise<UserModel> {
     const [code, user] = await this.usersService.update(body);
+    switch (code) {
+      case UsersResponse.Success:
+        return user;
+      case UsersResponse.UserNotFound:
+        throw new NotFoundException(`User was not found`);
+      default:
+        throw new InternalServerErrorException(`Internal errror`);
+    }
+  }
+
+  @Delete()
+  @HttpCode(200)
+  @ApiOkResponse({ type: UserModel, description: 'User was deleted' })
+  @ApiNotFoundResponse({ description: `User was not found` })
+  async delete(@Body() body: DeleteUserDto): Promise<UserModel> {
+    const [code, user] = await this.usersService.delete(body);
     switch (code) {
       case UsersResponse.Success:
         return user;

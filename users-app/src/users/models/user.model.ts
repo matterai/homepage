@@ -15,4 +15,7 @@ export class UserModel {
 
   @ApiProperty({ description: 'When user was registered' })
   created: Date;
+
+  @ApiProperty({ description: 'When user was updated last time' })
+  updated: Date;
 }
