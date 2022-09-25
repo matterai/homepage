@@ -20,7 +20,7 @@ import {
   ApiOkResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { AddEvmUserDto } from './dtos/add-evm-user.dto';
+import { AddUserDto } from './dtos/add-user.dto';
 import { EditUserDto } from './dtos/edit-user.dto';
 import { GetUserDto } from './dtos/get-user.dto';
 import { DeleteUserDto } from './dtos/remove-user.dto';
@@ -53,8 +53,8 @@ export class UsersController {
   @HttpCode(201)
   @ApiCreatedResponse({ type: UserModel, description: 'User created' })
   @ApiBadRequestResponse({ description: 'Invalid payload in request' })
-  @ApiConflictResponse({ description: 'There is a user with such an address' })
-  async post(@Body() body: AddEvmUserDto): Promise<UserModel> {
+  @ApiConflictResponse({ description: 'User already exists' })
+  async post(@Body() body: AddUserDto): Promise<UserModel> {
     const [code, user] = await this.usersService.create(body);
     switch (code) {
       case UsersResponse.Success:

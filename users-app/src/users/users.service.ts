@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { getChecksum, queryFailedErrorPostgres } from 'src/utils';
 import { Repository } from 'typeorm';
 import { AddEvmUserDto } from './dtos/add-evm-user.dto';
+import { AddUserDto } from './dtos/add-user.dto';
 import { EditUserDto } from './dtos/edit-user.dto';
 import { GetUserDto } from './dtos/get-user.dto';
 import { DeleteUserDto } from './dtos/remove-user.dto';
@@ -29,7 +30,34 @@ export class UsersService {
     }
   }
 
-  async create(dto: AddEvmUserDto): Promise<[UsersResponse, UserModel | null]> {
+  async create(dto: AddUserDto): Promise<[UsersResponse, UserModel | null]> {
+    const { email, displayName } = dto;
+
+    const user = new UserEntity();
+    user.email = email;
+    user.displayName = displayName;
+
+    try {
+      const result = await this.usersRepository.save(user);
+      return [UsersResponse.Success, UsersMap.toModel(result)];
+    } catch (e) {
+      if (queryFailedErrorPostgres(e)) {
+        switch (e.code) {
+          case '23505':
+            this.logger.error(`Conflict while inserting`, JSON.stringify(e));
+            return [UsersResponse.UserAlreadyExist, null];
+          default:
+            this.logger.error(`Unhandled Postgres Error`, JSON.stringify(e));
+            return [UsersResponse.UnhandledError, null];
+        }
+      } else {
+        this.logger.error(`Unhandled error`, JSON.stringify(e));
+        return [UsersResponse.UnhandledError, null];
+      }
+    }
+  }
+
+  async createEvmUser(dto: AddEvmUserDto): Promise<[UsersResponse, UserModel | null]> {
     const address = getChecksum(dto.address);
 
     if (!address) {
