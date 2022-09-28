@@ -1,5 +1,6 @@
 import { Component } from "react";
 import GitHubIcon from '@mui/icons-material/GitHub';
+import { Link } from "react-router-dom";
 
 export default class Header extends Component {
     render() {
@@ -12,22 +13,9 @@ export default class Header extends Component {
                 </div>
                 <div className="flex-none">
                     <ul className="menu menu-horizontal p-0">
-                        <li>
-                            <a href="/">
-                                Works
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/">
-                                Posts
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/">
-                                <GitHubIcon /> 
-                                GitHub
-                            </a>
-                        </li>
+                        <li><Link to="/works">Works</Link></li>
+                        <li><Link to="/posts">Posts</Link></li>
+                        <li><a href="https://github.com/matterai"><GitHubIcon /> GitHub</a></li>
                     </ul>
                 </div>
             </div>
