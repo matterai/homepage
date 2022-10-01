@@ -1,18 +1,19 @@
 import { Route, Routes } from 'react-router-dom';
-import Index from "./pages/Index";
+import Layout from './Layout';
+import Home from './pages/Home';
 import Posts from './pages/Posts';
 import Works from "./pages/Works";
 
 function App() {
   return (
     <div>
-      <div className="container mx-auto">
-        <Routes>
-          <Route path="/" element={<Index />} />
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route index element={<Home />} />
           <Route path="/works" element={<Works />} />
           <Route path="/posts" element={<Posts />} />
-        </Routes>
-      </div>
+        </Route>
+      </Routes>
     </div>
   );
 }
